@@ -20,9 +20,9 @@ export const reduceCommunityData = (
       // sum population is flag is set
       ...(shouldSumPopulation
         ? {
-            population: a.population + b.population,
-            normal: a.normal + b.normal,
-          }
+          population: a.population + b.population,
+          normal: a.normal + b.normal,
+        }
         : {}),
       recovered: a.recovered + b.recovered,
       recoveredObserved: a.recoveredObserved + b.recoveredObserved,
