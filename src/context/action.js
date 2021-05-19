@@ -7,6 +7,7 @@ export const fetchCommunities = async (state, dispatch, payload) => {
     const { data } = response;
     const collection = data[0];
     const { jsonb_build_object: features } = collection;
+    dispatch({ type: ACTIONS.SET_DATA_LOADING, payload: false });
     dispatch({ type: ACTIONS.SET_COMMUNITIES, payload: features });
   } catch (error) {
     console.log(error);

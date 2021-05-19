@@ -1,8 +1,15 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import AppContext from "context";
-import { Map, TileLayer, Polygon, Popup } from "react-leaflet";
-import { reduceCommunityData, resolveAreaStatusColor } from "utils";
+import { TileLayer, Polygon, Popup } from "react-leaflet";
+import {
+  reduceCommunityData,
+  resolveAreaStatusColor,
+  getHeatmapDataFromFeatures,
+  calculatePolygonCenter,
+} from "utils";
 import { DEFAULT_COMMUNITY_VALUE } from "config/constant";
+import HeatmapLayer from "react-leaflet-heatmap-layer";
+import FullscreenControl from "react-leaflet-fullscreen";
 import { ACTIONS } from "context/actionCreator";
 import { CovidMap as CovMap } from "./styled";
 
@@ -25,9 +32,15 @@ const CommunityPolygon = (props) => {
   ]);
   return (
     <Polygon
-      onclick={() =>
-        dispatch({ type: ACTIONS.SET_SELECTED_COMMUNITY, payload: name })
-      }
+      onclick={(e) => {
+        dispatch({ type: ACTIONS.SET_SELECTED_COMMUNITY, payload: name });
+        const {
+          target: {
+            options: { positions },
+          },
+        } = e;
+        leafletElement.flyToBounds(positions);
+      }}
       positions={positions}
       key={key}
       fillColor={color}
@@ -77,12 +90,13 @@ const CovidMap = (props) => {
       } = f;
       const { id } = properties;
       const len = coordinates[0].length;
-      const centerLon = coordinates[0].reduce((a, b) => a + b[0], 0) / len;
-      const centerLat = coordinates[0].reduce((a, b) => a + b[1], 0) / len;
-      bounds.current.push([centerLat, centerLon]);
+      const [lat, lng] = calculatePolygonCenter(coordinates[0]);
+      bounds.current.push([lat, lng]);
       idBoundsMap.current[id] = coordinates[0];
     });
-    bounds.current.length > 0 && map.flyToBounds(bounds.current);
+    selectedCommunity === DEFAULT_COMMUNITY_VALUE &&
+      bounds.current.length > 0 &&
+      map.flyToBounds(bounds.current);
   };
 
   useEffect(() => {
@@ -90,16 +104,30 @@ const CovidMap = (props) => {
   }, [communityFeatures, selectedCommunity]);
 
   const features = communityFeatures.features ? communityFeatures.features : [];
+  const heatmapData = getHeatmapDataFromFeatures(features);
+  console.log({ heatmapData });
   return (
     <CovMap
       center={DEFAULT_COORDINATES}
       onclick={() => {
+        dispatch({
+          type: ACTIONS.SET_SELECTED_COMMUNITY,
+          payload: DEFAULT_COMMUNITY_VALUE,
+        });
         const { leafletElement: map } = mapRef.current;
         map.flyToBounds(bounds.current);
       }}
       zoom={13}
       ref={mapRef}
     >
+      <HeatmapLayer
+        fitBoundsOnLoad
+        fitBoundsOnUpdate
+        points={heatmapData}
+        longitudeExtractor={(m) => m[1]}
+        latitudeExtractor={(m) => m[0]}
+        intensityExtractor={(m) => parseFloat(m[2] * 100)}
+      />
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -114,6 +142,7 @@ const CovidMap = (props) => {
           />
         );
       })}
+      <FullscreenControl position="topright" />
     </CovMap>
   );
 };

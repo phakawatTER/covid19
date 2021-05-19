@@ -1,8 +1,8 @@
 import { useReducer, useEffect } from "react";
 import AppContext from "context";
-import Header from "components/Header";
 import MainPanel from "components/MainPanel";
 import { reducer, ACTIONS, INITITAL_STATE } from "context/actionCreator.js";
+import "react-leaflet-fullscreen/dist/styles.css";
 import "antd/dist/antd.compact.css";
 import "leaflet/dist/leaflet.css";
 import "./index.css";
@@ -21,7 +21,6 @@ function App() {
         dispatch,
       }}
     >
-      <Header />
       <MainPanel />
     </AppContext.Provider>
   );
