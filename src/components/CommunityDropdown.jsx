@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Select, Button, DatePicker } from "antd";
+import { Select, Button, DatePicker, Row, Col } from "antd";
 import AppContext from "context";
 import { ACTIONS } from "context/actionCreator";
 import { DEFAULT_COMMUNITY_VALUE } from "config/constant";
@@ -12,39 +12,47 @@ const CommunityDropdown = () => {
     communityFeatures: { features },
     selectedCommunity,
     dateInterval,
+    dataLoading,
   } = state;
 
   const data = features ? features.map(({ properties }) => properties) : [];
   return (
     <>
-      <h1>เลือกวันที่เริ่มต้น</h1>
-      <DatePicker
-        style={{ width: "100%" }}
-        placeholder="เลือกวันที่"
-        value={dateInterval[0]}
-        onChange={(e) =>
-          dispatch({
-            type: ACTIONS.SET_DATE_INTERVAL,
-            payload: [e, dateInterval[1]],
-          })
-        }
-      />
-      <h1>เลือกวันที่สิ้นสุด</h1>
-      <DatePicker
-        style={{ width: "100%" }}
-        placeholder="เลือกวันที่"
-        value={dateInterval[1]}
-        onChange={(e) => {
-          console.log({ e });
-          dispatch({
-            type: ACTIONS.SET_DATE_INTERVAL,
-            payload: [dateInterval[0], e],
-          });
-        }}
-      />
+      <Row>
+        <Col xs={12}>
+          <h1>เลือกวันที่เริ่มต้น</h1>
+          <DatePicker
+            style={{ width: "100%" }}
+            placeholder="เลือกวันที่"
+            value={dateInterval[0]}
+            onChange={(e) =>
+              dispatch({
+                type: ACTIONS.SET_DATE_INTERVAL,
+                payload: [e, dateInterval[1]],
+              })
+            }
+          />
+        </Col>
+        <Col xs={12}>
+          <h1>เลือกวันที่สิ้นสุด</h1>
+          <DatePicker
+            style={{ width: "100%" }}
+            placeholder="เลือกวันที่"
+            value={dateInterval[1]}
+            onChange={(e) => {
+              dispatch({
+                type: ACTIONS.SET_DATE_INTERVAL,
+                payload: [dateInterval[0], e],
+              });
+            }}
+          />
+        </Col>
+      </Row>
+
       <Button
         type="primary"
         onClick={() => dispatch({ type: ACTIONS.FETCH_COMMUNITIES, dispatch })}
+        loading={dataLoading}
       >
         ค้นหา
       </Button>

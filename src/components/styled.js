@@ -53,3 +53,7 @@ export const CovidMap = styled(Map)`
     height: 50vh;
   }
 `;
+
+export const ContentCard = styled(Card)`
+  min-height: 80vh;
+`;

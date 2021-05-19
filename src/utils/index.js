@@ -51,3 +51,26 @@ export const isCommunityDataEmpty = (data) => {
   }
   return true;
 };
+
+export const calculatePolygonCenter = (points) => {
+  const lng = points.reduce((a, b) => a + b[0], 0) / points.length;
+  const lat = points.reduce((a, b) => a + b[1], 0) / points.length;
+  return [lat, lng];
+};
+
+export const getHeatmapDataFromFeatures = (features, key = "infected") => {
+  let validFeatures = features.filter((d) => d.properties.data !== null);
+  return validFeatures.reduce((a, d) => {
+    const {
+      geometry: { coordinates },
+      properties,
+    } = d;
+    const { data } = properties;
+    const reducedData = reduceCommunityData(data);
+    const coordinate = coordinates[0];
+    return [
+      ...a,
+      ...coordinate.map(([lng, lat]) => [lat, lng, reducedData[key]]),
+    ];
+  }, []);
+};
