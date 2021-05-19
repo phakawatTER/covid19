@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { useReducer, useEffect } from "react";
+import AppContext from "context";
+import Header from "components/Header";
+import MainPanel from "components/MainPanel";
+import { reducer, ACTIONS, INITITAL_STATE } from "context/actionCreator.js";
+import "antd/dist/antd.compact.css";
+import "leaflet/dist/leaflet.css";
+import "./index.css";
+import "react-resizable/css/styles.css";
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, INITITAL_STATE);
+  useEffect(() => {
+    dispatch({ type: ACTIONS.FETCH_COMMUNITIES, dispatch });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContext.Provider
+      value={{
+        state,
+        dispatch,
+      }}
+    >
+      <Header />
+      <MainPanel />
+    </AppContext.Provider>
   );
 }
 
