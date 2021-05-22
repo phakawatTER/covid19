@@ -58,3 +58,4 @@ export const CovidMap = styled(Map)`
 export const ContentCard = styled(Card)`
   min-height: 80vh;
 `;
+

@@ -5,8 +5,16 @@ import { Row, Col, Layout } from "antd";
 import { MainHeader } from "components/styled";
 import { useContext, useMemo } from "react";
 import AppContext from "context";
+import styled from "styled-components";
 
 const { Content } = Layout;
+
+const DashboardCol = styled(Col)`
+  @media screen and (min-width: 768px) {
+    overflow: scroll;
+    max-height: 90vh;
+  }
+`
 
 const MainPanel = () => {
   const context = useContext(AppContext)
@@ -17,14 +25,14 @@ const MainPanel = () => {
     <Layout className="layout">
       <MainHeader>covid 19</MainHeader>
       <Content>
-        <CommunityDropdown />
         <Row>
           <Col xs={24} md={12}>
             {CovidMap}
           </Col>
-          <Col xs={24} md={12}>
+          <DashboardCol xs={24} md={12}>
+            <CommunityDropdown />
             <Dashboard />
-          </Col>
+          </DashboardCol>
         </Row>
       </Content>
     </Layout>
