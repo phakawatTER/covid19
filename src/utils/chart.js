@@ -1,7 +1,6 @@
 import moment from "moment";
-import { reduceCommunityData, groupCommunityDataByDate } from "utils";
 
-export const formatCommunityDataForInfectionChart = (data, { startDate, endDate }) => {
+export const formatCommunityDataForChart = (data, { startDate, endDate, key }) => {
   const communityMap = {}
   const dateMap = {}
   // assign default values to the map
@@ -14,9 +13,9 @@ export const formatCommunityDataForInfectionChart = (data, { startDate, endDate 
     data.forEach(({ properties }) => {
       const { name, data } = properties
       let currentData = data.find(d => moment(d.timestamp).format("L") === date)
-      let infected = currentData ? currentData.infected : communityMap[name]
-      communityMap[name] = infected
-      dateMap[date] = dateMap[date] ? dateMap[date] + infected : infected
+      let targetData = currentData ? currentData[key] : communityMap[name]
+      communityMap[name] = targetData
+      dateMap[date] = dateMap[date] ? dateMap[date] + targetData : targetData
     })
   })
   const labels = Object.keys(dateMap).sort()
