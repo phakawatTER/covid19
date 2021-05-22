@@ -3,6 +3,7 @@ import { Layout, Card } from "antd";
 import { Map } from "react-leaflet";
 const { Header } = Layout;
 export const MainHeader = styled(Header)`
+  text-transform:uppercase;
   text-align: center;
   color: #fff;
   font-weight: bold;

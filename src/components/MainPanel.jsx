@@ -15,7 +15,7 @@ const MainPanel = () => {
 
   return (
     <Layout className="layout">
-      <MainHeader style={{ backgroundColor: "black" }}>Covid 19</MainHeader>
+      <MainHeader>covid 19</MainHeader>
       <Content>
         <CommunityDropdown />
         <Row>
