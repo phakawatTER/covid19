@@ -1,5 +1,7 @@
 import { getCommunities } from "api/communities";
 import { ACTIONS } from "./actionCreator";
+import { message } from "antd"
+
 export const fetchCommunities = async (state, dispatch, payload) => {
   try {
     const [response, err] = await getCommunities({ ...payload });
@@ -18,5 +20,6 @@ export const fetchCommunities = async (state, dispatch, payload) => {
     dispatch({ type: ACTIONS.SET_COMMUNITIES, payload: features });
   } catch (error) {
     console.log(error);
+    dispatch({ type: ACTIONS.SET_DATA_LOADING, payload: false })
   }
 };

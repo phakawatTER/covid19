@@ -58,7 +58,7 @@ const DashboardChart = ({ data, startDate, endDate }) => {
     <Row>
       <Col xs={24} style={{ padding: "1rem" }}>
         <h1>ผู้เสียชีวิตสะสม</h1>
-        <Line data={chart2} options={options} />
+        <Line data={chart3} options={options} />
       </Col>
       <Col xs={24} style={{ padding: "1rem" }}>
         <h1>ผู้ติดเชื้อสะสม</h1>

@@ -38,7 +38,8 @@ export const InfoGridCard = styled.div`
     font-size: 1rem;
   }
   .info-count {
-    font-size: 1.5rem;
+    font-weight:bold;
+    font-size: 2.5rem;
   }
 `;
 

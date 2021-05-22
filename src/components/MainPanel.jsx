@@ -12,7 +12,7 @@ const { Content } = Layout;
 const DashboardCol = styled(Col)`
   @media screen and (min-width: 768px) {
     overflow: scroll;
-    max-height: 90vh;
+    max-height: 100vh
   }
 `
 
@@ -25,7 +25,7 @@ const MainPanel = () => {
     <Layout className="layout">
       <MainHeader>covid 19</MainHeader>
       <Content>
-        <Row>
+        <Row >
           <Col xs={24} md={12}>
             {CovidMap}
           </Col>
