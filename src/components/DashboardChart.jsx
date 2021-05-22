@@ -1,43 +1,44 @@
-import { memo } from "react";
 import { Line } from "react-chartjs-2";
-import { formatCommunityChartData } from "utils/chart";
+import { formatCommunityDataForInfectionChart } from "utils/chart";
 
 const options = {
   scales: {
     y: {
+      min: 0,
       beginAtZero: true,
     },
   },
 };
 
-const DashboardChart = (props) => {
-  let { labels, datasets: data } = formatCommunityChartData(
-    props.data,
-    "infected"
-  );
-  let dataTotal = data.reduce((a, b, i) => {
-    if (i === 0) return [b];
-    return [...a, b + a[i - 1]];
-  }, []);
-  console.log({ dataTotal });
+const DashboardChart = ({ data, startDate, endDate }) => {
+
+  const { labels, datasets } = formatCommunityDataForInfectionChart(data, { startDate, endDate })
+  let datasets2 = datasets.map((d, i) => {
+    return i - 1 >= 0 ? d - datasets[i - 1] : 0
+  })
   let chartData = {
     labels,
     datasets: [
       {
-        label: "ผู้ติดเชื้อรายวัน",
-        data,
-        backgroundColor: "orange",
-        borderColor: "orange",
-      },
-      {
         label: "ผู้ติดเชื้อสะสม",
-        data: dataTotal,
+        data: datasets,
         backgroundColor: "red",
         borderColor: "red",
       },
+      {
+        label: "ผู้ติดเชื้อรายวัน",
+        data: datasets2,
+        backgroundColor: "orange",
+        borderColor: "orange",
+      },
     ],
   };
-  return <Line data={chartData} options={options} />;
+  return (
+    <>
+      < Line data={chartData} options={options} />
+      {/* < Line data={chartData2} options={options} /> */}
+    </>
+  )
 };
 
 export default DashboardChart;

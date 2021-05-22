@@ -2,10 +2,11 @@ import { InfoCard, InfoGridCard } from "./styled";
 import { reduceCommunityData } from "utils";
 
 const DashboardCard = ({ data }) => {
-  const totalCommunity = data.length;
+  const totalCommunity = data.length
   data = data.filter((d) => d !== null);
-  const accData = reduceCommunityData(data, { shouldSumPopulation: true });
-  console.log({ accData });
+  const totalValidCommunity = data.length
+  const dataNotFoundCommunity = totalCommunity - totalValidCommunity
+  const accData = reduceCommunityData(data, { reduceCommunity: true });
   const {
     infected,
     infectedAtHospital,
@@ -75,11 +76,20 @@ const DashboardCard = ({ data }) => {
           color={"#000"}
         >
           <div>
-            <b className={"info-title"}>ประชากร ({totalCommunity}) ชุมชน</b>
+            <b className={"info-title"}>ทั้งหมด ({totalCommunity}) ชุมชน</b>
           </div>
           <div>
-            <b className={"info-title"}>{population}</b>
+            <b className={"info-title"}>ประชากร ({totalValidCommunity}) ชุมชน</b>
           </div>
+          <div>
+            <b className={"info-title"}>{population} คน</b>
+          </div>
+          {dataNotFoundCommunity > 0 && (
+            <div>
+              <b className={"info-title"}>ไม่พบข้อมูล ({dataNotFoundCommunity}) ชุมชน</b>
+            </div>
+          )}
+
         </InfoGridCard>
       </InfoCard>
     </>

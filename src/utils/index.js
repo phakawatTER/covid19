@@ -1,24 +1,44 @@
 import { STATUS_COLOR } from "config/constant";
+import moment from "moment"
+
+export const findMaxPopulation = (data) => {
+  let maxPop = 0
+  data.forEach(({ population }) => {
+    if (population > maxPop) maxPop = population
+  })
+  return maxPop
+}
+
+export const groupCommunityDataByDate = (data) => {
+  let dataDateMap = {}
+  data.map(d => {
+    const { timestamp } = d
+    const date = moment(timestamp).format("L")
+    if (dataDateMap[date]) return
+    dataDateMap[date] = d
+  })
+  return data = Object.keys(dataDateMap).sort().map(date => dataDateMap[date])
+}
 
 export const reduceCommunityData = (
   data,
-  options = { shouldSumPopulation: false }
+  options = { reduceCommunity: false }
 ) => {
-  const { shouldSumPopulation } = options;
+  const { reduceCommunity } = options;
   let reduced = data.reduce((a, b, i) => {
     if (i === 0) return b;
     a = {
       died: a.died + b.died,
       govInfected: a.govInfected + b.govInfected,
-      infected: a.infected + b.infected,
       infectedAtHome: a.infectedAtHome + b.infectedAtHome,
       infectedAtHomeCritical:
         a.infectedAtHomeCritical + b.infectedAtHomeCritical,
       infectedAtHospital: a.infectedAtHospital + b.infectedAtHospital,
+      infected: a.infected + b.infected,
       noData: a.noData + b.noData,
       normal: b.normal,
       // sum population is flag is set
-      ...(shouldSumPopulation
+      ...(reduceCommunity
         ? {
           population: a.population + b.population,
           normal: a.normal + b.normal,
@@ -36,7 +56,9 @@ export const reduceCommunityData = (
     };
     return a;
   }, {});
-  return { ...data[0], ...reduced };
+  let r = { ...data[0], ...reduced }
+  r.population = reduceCommunity ? r.population : findMaxPopulation(data)
+  return r
 };
 
 export const resolveAreaStatusColor = (data) => {

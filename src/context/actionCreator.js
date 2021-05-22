@@ -2,7 +2,7 @@ import { DEFAULT_COMMUNITY_VALUE } from "config/constant";
 import * as reducerAction from "./action";
 import moment from "moment";
 
-export const FIRST_GATHER_DATA_DATE = moment("2021-04-01");
+export const FIRST_GATHER_DATA_DATE = moment("2021-04-30");
 
 export const INITITAL_STATE = {
   selectedCommunity: DEFAULT_COMMUNITY_VALUE,

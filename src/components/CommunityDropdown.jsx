@@ -3,7 +3,6 @@ import { Select, Button, DatePicker, Row, Col } from "antd";
 import AppContext from "context";
 import { ACTIONS } from "context/actionCreator";
 import { DEFAULT_COMMUNITY_VALUE } from "config/constant";
-import { reduceCommunityData } from "utils";
 
 const CommunityDropdown = () => {
   const context = useContext(AppContext);
@@ -15,10 +14,10 @@ const CommunityDropdown = () => {
     dataLoading,
   } = state;
 
-  const data = features ? features.map(({ properties }) => properties) : [];
+  let selectionOptions = features ? features.map(({ properties }) => properties) : [];
   return (
     <>
-      <Row>
+      <Row style={{ padding: "1rem" }}>
         <Col xs={12}>
           <h1>เลือกวันที่เริ่มต้น</h1>
           <DatePicker
@@ -32,6 +31,13 @@ const CommunityDropdown = () => {
               })
             }
           />
+          <Button
+            type="primary"
+            onClick={() => dispatch({ type: ACTIONS.FETCH_COMMUNITIES, dispatch })}
+            loading={dataLoading}
+          >
+            ค้นหา
+          </Button>
         </Col>
         <Col xs={12}>
           <h1>เลือกวันที่สิ้นสุด</h1>
@@ -49,40 +55,48 @@ const CommunityDropdown = () => {
         </Col>
       </Row>
 
-      <Button
-        type="primary"
-        onClick={() => dispatch({ type: ACTIONS.FETCH_COMMUNITIES, dispatch })}
-        loading={dataLoading}
-      >
-        ค้นหา
-      </Button>
-      <h1>เลือกชุมชน</h1>
-      <Select
-        defaultValue={DEFAULT_COMMUNITY_VALUE}
-        value={selectedCommunity}
-        style={{ width: "100%" }}
-        placeholder={"เลือกชุมชน"}
-        onSelect={(e) =>
-          dispatch({ type: ACTIONS.SET_SELECTED_COMMUNITY, payload: e })
-        }
-      >
-        <Select.Option
-          key={"community-option-0"}
-          value={DEFAULT_COMMUNITY_VALUE}
-        >
-          รวมทั้งหมด
-        </Select.Option>
-        {data.map((d, i) => {
-          const { name, id, data } = d;
-          const reducedData = data ? reduceCommunityData(data) : {};
-          const { died, infected } = reducedData;
-          return (
-            <Select.Option key={`community-option${i + 1}`} value={name}>
-              {name} {data && `(เสียชีวิต:${died} ติดเชื้อ:${infected})`}
+      <Row style={{ padding: "1rem" }}>
+        <Col xs={24} md={24} xl={12}>
+          <h1>เลือกชุมชน</h1>
+          <Select
+            defaultValue={DEFAULT_COMMUNITY_VALUE}
+            value={selectedCommunity}
+            style={{ width: "100%" }}
+            placeholder={"เลือกชุมชน"}
+            showSearch={true}
+            onSelect={(e) =>
+              dispatch({ type: ACTIONS.SET_SELECTED_COMMUNITY, payload: e })
+            }
+          >
+            <Select.Option
+              key={"community-option-0"}
+              value={DEFAULT_COMMUNITY_VALUE}
+            >
+              รวมทั้งหมด
             </Select.Option>
-          );
-        })}
-      </Select>
+            {selectionOptions.map((d, i) => {
+              const { name, data } = d;
+              const reducedData = data ? data[0] : {}
+              const { infected } = reducedData
+              return (
+                <Select.Option key={`community-option${i + 1}`} value={name}
+                  {
+                  ...infected > 0 ? {
+                    style: {
+                      backgroundColor: "#b20808",
+                      color: "white"
+                    }
+                  } : {}
+                  }
+                >
+                  {name} {infected > 0 && `(ติดเชื้อ:${infected})`}
+                </Select.Option>
+              );
+            })}
+          </Select>
+        </Col>
+      </Row>
+
     </>
   );
 };

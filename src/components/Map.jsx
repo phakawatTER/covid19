@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef } from "react";
 import AppContext from "context";
-import { TileLayer, Polygon, Popup } from "react-leaflet";
+import { TileLayer, Polygon, Popup, Tooltip } from "react-leaflet";
 import {
   reduceCommunityData,
   resolveAreaStatusColor,
   getHeatmapDataFromFeatures,
   calculatePolygonCenter,
+  groupCommunityDataByDate,
 } from "utils";
 import { DEFAULT_COMMUNITY_VALUE } from "config/constant";
 import HeatmapLayer from "react-leaflet-heatmap-layer";
@@ -20,12 +21,15 @@ const CommunityPolygon = (props) => {
   var { leafletElement } = map.current;
   const { properties } = feature;
   const { data, name, type } = properties;
-  const reducedData = properties.data
-    ? reduceCommunityData(properties.data)
-    : {};
+  var reducedData = {
+  }
+  if (data) {
+    const dateData = groupCommunityDataByDate(properties.data)
+    reducedData = reduceCommunityData([dateData[dateData.length - 1]])
+  }
+
   const { population, infected, died } = reducedData;
   const color = resolveAreaStatusColor(reducedData);
-
   const positions = feature.geometry.coordinates[0].map(([lon, lat]) => [
     lat,
     lon,
@@ -48,6 +52,22 @@ const CommunityPolygon = (props) => {
       opacity={1}
       fillOpacity={0.8}
     >
+      <Tooltip>
+        <div>
+          <b>
+            {name} ({type})
+          </b>
+        </div>
+        {data ? (
+          <>
+            <div>ประชากร: {population}</div>
+            <div>ติดเชื้อสะสม: {infected}</div>
+            <div>เสียชีวิตสะสม: {died}</div>
+          </>
+        ) : (
+          <b>ไม่พบข้อมูล</b>
+        )}
+      </Tooltip>
       <Popup>
         <div>
           <b>
